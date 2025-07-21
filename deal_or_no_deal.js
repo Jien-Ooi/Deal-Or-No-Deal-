@@ -396,15 +396,15 @@ class DealOrNoDealGame {
         } else if (this.currentRound === 2) {
             baseMultiplier = 0.20;
         } else if (this.currentRound === 3) {
-            baseMultiplier = 0.33;
+            baseMultiplier = 0.38;
         } else if (this.currentRound === 4) {
-            baseMultiplier = 0.45;
+            baseMultiplier = 0.55;
         } else if (this.currentRound === 5) {
-            baseMultiplier = 0.60;
+            baseMultiplier = 0.70;
         } else if (this.currentRound === 6) {
-            baseMultiplier = 0.75;
+            baseMultiplier = 0.85;
         } else if (this.currentRound >= 7) {
-            baseMultiplier = 0.88;
+            baseMultiplier = 0.93;
         }
         /*
         // Adjust based on eliminated values
