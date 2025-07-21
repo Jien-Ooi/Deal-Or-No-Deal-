@@ -1295,3 +1295,79 @@ body::before {
         transform: translateZ(40px) rotateX(5deg);
     }
 }
+
+/* Deal Comparison Styles */
+.deal-comparison {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.deal-taken, .case-had {
+    background: linear-gradient(145deg, #2a4d3a, #1e3a2a);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    transform: translateZ(20px) rotateX(10deg);
+    transform-style: preserve-3d;
+}
+
+.deal-taken h3, .case-had h3 {
+    color: #ffd700;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.deal-taken h2, .case-had h2 {
+    color: #00ff88;
+    font-size: 1.8rem;
+    text-shadow: 
+        0 0 15px rgba(0,255,136,0.6),
+        2px 2px 4px rgba(0,0,0,0.8);
+    margin: 0;
+}
+
+.vs {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    transform: translateZ(10px);
+    animation: vsGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes vsGlow {
+    0% { 
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        transform: translateZ(10px) scale(1);
+    }
+    100% { 
+        text-shadow: 
+            0 0 20px rgba(255,215,0,0.8),
+            2px 2px 4px rgba(0,0,0,0.8);
+        transform: translateZ(15px) scale(1.05);
+    }
+}
+
+@media (max-width: 768px) {
+    .deal-comparison {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .vs {
+        transform: rotate(90deg) translateZ(10px);
+    }
+    
+    .deal-taken, .case-had {
+        min-width: 200px;
+        transform: translateZ(10px) rotateX(5deg);
+    }
+}

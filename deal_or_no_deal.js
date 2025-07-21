@@ -669,23 +669,99 @@ class DealOrNoDealGame {
 
     acceptDeal() {
         // Play deal acceptance sound
-        this.playSound('deal', 0.6);
+        this.playSound('victory', 0.8);
         
         const playerCaseValue = this.cases[this.playerCase];
-        let message = `🎉 DEAL! ${this.playerName}, you won ${this.formatCurrency(this.currentOffer)}!\n`;
-        message += `Your case #${this.playerCase} contained: ${this.formatCurrency(playerCaseValue)}\n`;
         
-        if (this.currentOffer > playerCaseValue) {
-            message += `🎯 Good deal, ${this.playerName}! You made more than your case!`;
+        // Show the deal acceptance message
+        this.showMessage(`🎉 ${this.playerName} accepts the deal for ${this.formatCurrency(this.currentOffer)}!`);
+        
+        // Create dramatic reveal of what was in their case
+        setTimeout(() => {
+            this.showMessage(`But what was in your case #${this.playerCase}?`);
+            this.playSound('drumRoll', 0.5);
+        }, 2000);
+        
+        // Reveal the player's case value after suspense
+        setTimeout(() => {
+            const caseElement = document.querySelector(`[data-case-number="${this.playerCase}"]`);
+            if (caseElement) {
+                caseElement.classList.add('opened');
+                caseElement.innerHTML = `<div class="case-number">${this.playerCase}</div><div class="case-value">${this.formatCurrency(playerCaseValue)}</div>`;
+            }
+            
+            // Determine if it was a good or bad deal
+            let resultMessage = '';
+            
+            if (playerCaseValue > this.currentOffer) {
+                const difference = playerCaseValue - this.currentOffer;
+                resultMessage = `💔 Oh no! Your case had ${this.formatCurrency(playerCaseValue)}! You missed out on ${this.formatCurrency(difference)}!`;
+                this.playSound('defeat', 0.6);
+            } else if (playerCaseValue < this.currentOffer) {
+                const difference = this.currentOffer - playerCaseValue;
+                resultMessage = `🎉 Great deal! Your case only had ${this.formatCurrency(playerCaseValue)}! You made ${this.formatCurrency(difference)} extra!`;
+                this.createConfetti();
+                this.playSound('victory', 0.8);
+            } else {
+                resultMessage = `😮 Incredible! Your case had exactly ${this.formatCurrency(playerCaseValue)}! Perfect deal!`;
+                this.createConfetti();
+                this.playSound('victory', 0.8);
+            }
+            
+            this.showMessage(resultMessage);
+            
+            // Show final result screen
+            setTimeout(() => {
+                this.showDealResultScreen(this.currentOffer, playerCaseValue);
+            }, 3000);
+            
+        }, 4000);
+    }
+
+    showDealResultScreen(dealAmount, caseValue) {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('final-screen').classList.add('active');
+        
+        // Update final screen content for deal scenario
+        document.getElementById('final-title').textContent = '💼 DEAL RESULT 💼';
+        document.getElementById('final-message').textContent = `${this.playerName}, you accepted the banker's offer!`;
+        
+        // Hide the open case button since we already revealed it
+        document.getElementById('open-case-btn').style.display = 'none';
+        
+        // Show the comparison
+        document.getElementById('final-case-value').innerHTML = `
+            <div class="deal-comparison">
+                <div class="deal-taken">
+                    <h3>💰 Your Deal</h3>
+                    <h2>${this.formatCurrency(dealAmount)}</h2>
+                </div>
+                <div class="vs">VS</div>
+                <div class="case-had">
+                    <h3>📦 Your Case Had</h3>
+                    <h2>${this.formatCurrency(caseValue)}</h2>
+                </div>
+            </div>
+        `;
+        document.getElementById('final-case-value').classList.remove('hidden');
+        
+        // Show result message
+        let resultMessage = '';
+        if (caseValue > dealAmount) {
+            const difference = caseValue - dealAmount;
+            resultMessage = `You missed out on ${this.formatCurrency(difference)}, but ${this.formatCurrency(dealAmount)} is still great!`;
+        } else if (caseValue < dealAmount) {
+            const difference = dealAmount - caseValue;
+            resultMessage = `Smart move! You gained ${this.formatCurrency(difference)} by taking the deal!`;
         } else {
-            message += `😅 Your case was worth more, but a deal's a deal!`;
+            resultMessage = `Perfect! The deal was exactly what your case was worth!`;
         }
         
-        this.showMessage(message);
+        document.getElementById('final-result-message').textContent = resultMessage;
+        document.getElementById('final-result-message').classList.remove('hidden');
         
-        setTimeout(() => {
-            this.showPlayAgain();
-        }, 3000);
+        // Show play again option
+        setTimeout(() => this.showPlayAgain(), 2000);
     }
 
     rejectDeal() {
