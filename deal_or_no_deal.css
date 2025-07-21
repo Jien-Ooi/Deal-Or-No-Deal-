@@ -1000,7 +1000,8 @@ header h2 {
     .banker-buttons {
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
+        margin-top: 15px;
     }
     
     header h1 {
@@ -1013,24 +1014,35 @@ header h2 {
     }
     
     .banker-section {
-        height: 180px;
-        padding: 15px;
+        height: auto;
+        min-height: 200px;
+        padding: 20px 15px;
+        margin-top: 15px;
     }
     
     .banker-section h3 {
-        font-size: 1.2rem;
-        margin-bottom: 8px;
-    }
-    
-    .banker-offer h2 {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
         margin-bottom: 10px;
     }
     
+    .banker-offer h2 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    
     .deal-btn, .no-deal-btn {
-        padding: 12px 24px;
-        font-size: 1.1rem;
-        min-width: 100px;
+        padding: 18px 30px;
+        font-size: 1.4rem;
+        min-width: 150px;
+        width: 80%;
+        max-width: 250px;
+        transform: translateZ(15px) rotateX(8deg);
+        border: 3px solid #fff;
+        margin: 5px 0;
+    }
+    
+    .deal-btn:hover, .no-deal-btn:hover {
+        transform: translateZ(25px) rotateX(12deg) scale(1.05);
     }
 }
 
