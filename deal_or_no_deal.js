@@ -798,7 +798,7 @@ class DealOrNoDealGame {
                 <button onclick="playAgain()" class="play-again-btn">Play Again</button>
             `;
             document.getElementById('final-result').classList.remove('hidden');
-        }, 2000);
+        }, 10000);
     }
 
     rejectDeal() {
