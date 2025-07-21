@@ -790,15 +790,13 @@ class DealOrNoDealGame {
         document.getElementById('final-result-message').textContent = resultMessage;
         document.getElementById('final-result-message').classList.remove('hidden');
         
-        // Show play again button
-        setTimeout(() => {
-            document.getElementById('final-result').innerHTML = `
-                <h3>🎭 Thanks for playing! 🎭</h3>
-                <p>Hope you had fun!</p>
-                <button onclick="playAgain()" class="play-again-btn">Play Again</button>
-            `;
-            document.getElementById('final-result').classList.remove('hidden');
-        }, 10000);
+        // Show play again button immediately with the results
+        document.getElementById('final-result').innerHTML = `
+            <h3>🎭 Thanks for playing! 🎭</h3>
+            <p>Hope you had fun!</p>
+            <button onclick="playAgain()" class="play-again-btn">Play Again</button>
+        `;
+        document.getElementById('final-result').classList.remove('hidden');
     }
 
     rejectDeal() {
