@@ -710,58 +710,95 @@ class DealOrNoDealGame {
             
             this.showMessage(resultMessage);
             
-            // Show final result screen
+            // Show final result screen with deal comparison
             setTimeout(() => {
-                this.showDealResultScreen(this.currentOffer, playerCaseValue);
+                this.showFinalResultScreen(this.currentOffer, playerCaseValue, true);
             }, 3000);
             
         }, 4000);
     }
 
-    showDealResultScreen(dealAmount, caseValue) {
+    showFinalResultScreen(dealAmount = null, caseValue, isDeal = false) {
         document.getElementById('game-screen').classList.remove('active');
         document.getElementById('final-screen').classList.add('active');
         
-        // Update final screen content for deal scenario
-        document.getElementById('final-title').textContent = '💼 DEAL RESULT 💼';
-        document.getElementById('final-message').textContent = `${this.playerName}, you accepted the banker's offer!`;
+        // Update final screen content based on scenario
+        if (isDeal) {
+            document.getElementById('final-title').textContent = '💼 DEAL RESULT 💼';
+            document.getElementById('final-message').textContent = `${this.playerName}, you accepted the banker's offer!`;
+        } else {
+            document.getElementById('final-title').textContent = '🎊 FINAL RESULT 🎊';
+            document.getElementById('final-message').textContent = `${this.playerName}, here's what was in your case!`;
+        }
         
-        // Hide the open case button since we already revealed it
+        // Hide the open case button since we're showing results
         document.getElementById('open-case-btn').style.display = 'none';
         
-        // Show the comparison
-        document.getElementById('final-case-value').innerHTML = `
-            <div class="deal-comparison">
-                <div class="deal-taken">
-                    <h3>💰 Your Deal</h3>
-                    <h2>${this.formatCurrency(dealAmount)}</h2>
+        // Show the appropriate result display
+        if (isDeal) {
+            // Show deal comparison
+            document.getElementById('final-case-value').innerHTML = `
+                <div class="deal-comparison">
+                    <div class="deal-taken">
+                        <h3>💰 Your Deal</h3>
+                        <h2>${this.formatCurrency(dealAmount)}</h2>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="case-had">
+                        <h3>📦 Your Case Had</h3>
+                        <h2>${this.formatCurrency(caseValue)}</h2>
+                    </div>
                 </div>
-                <div class="vs">VS</div>
-                <div class="case-had">
-                    <h3>📦 Your Case Had</h3>
-                    <h2>${this.formatCurrency(caseValue)}</h2>
+            `;
+        } else {
+            // Show just the case value for no-deal scenario
+            document.getElementById('final-case-value').innerHTML = `
+                <div class="final-case-reveal">
+                    <h3>📦 Your Case #${this.playerCase} Contained:</h3>
+                    <h1 class="final-amount">${this.formatCurrency(caseValue)}</h1>
                 </div>
-            </div>
-        `;
+            `;
+        }
         document.getElementById('final-case-value').classList.remove('hidden');
         
         // Show result message
         let resultMessage = '';
-        if (caseValue > dealAmount) {
-            const difference = caseValue - dealAmount;
-            resultMessage = `You missed out on ${this.formatCurrency(difference)}, but ${this.formatCurrency(dealAmount)} is still great!`;
-        } else if (caseValue < dealAmount) {
-            const difference = dealAmount - caseValue;
-            resultMessage = `Smart move! You gained ${this.formatCurrency(difference)} by taking the deal!`;
+        if (isDeal) {
+            // Deal scenario messages
+            if (caseValue > dealAmount) {
+                const difference = caseValue - dealAmount;
+                resultMessage = `You missed out on ${this.formatCurrency(difference)}, but ${this.formatCurrency(dealAmount)} is still great!`;
+            } else if (caseValue < dealAmount) {
+                const difference = dealAmount - caseValue;
+                resultMessage = `Smart move! You gained ${this.formatCurrency(difference)} by taking the deal!`;
+            } else {
+                resultMessage = `Perfect! The deal was exactly what your case was worth!`;
+            }
         } else {
-            resultMessage = `Perfect! The deal was exactly what your case was worth!`;
+            // No-deal scenario messages
+            if (caseValue >= 75000) {
+                resultMessage = `🎉 INCREDIBLE! You found one of the top prizes!`;
+            } else if (caseValue >= 25000) {
+                resultMessage = `🎊 Fantastic! A great result!`;
+            } else if (caseValue >= 5000) {
+                resultMessage = `👏 Well done! A solid win!`;
+            } else {
+                resultMessage = `🎭 Not this time, but you played brilliantly!`;
+            }
         }
         
         document.getElementById('final-result-message').textContent = resultMessage;
         document.getElementById('final-result-message').classList.remove('hidden');
         
-        // Show play again option
-        setTimeout(() => this.showPlayAgain(), 2000);
+        // Show play again button
+        setTimeout(() => {
+            document.getElementById('final-result').innerHTML = `
+                <h3>🎭 Thanks for playing! 🎭</h3>
+                <p>Hope you had fun!</p>
+                <button onclick="playAgain()" class="play-again-btn">Play Again</button>
+            `;
+            document.getElementById('final-result').classList.remove('hidden');
+        }, 2000);
     }
 
     rejectDeal() {
@@ -828,39 +865,21 @@ class DealOrNoDealGame {
         
         const playerCaseValue = this.cases[this.playerCase];
         
-        // Dramatic reveal with sound
+        // Play appropriate final sound based on value
+        if (playerCaseValue >= 50000) {
+            this.playSound('victory', 0.8);
+            this.createConfetti();
+            this.createMoneyRain();
+        } else if (playerCaseValue >= 10000) {
+            this.playSound('highValue', 0.6);
+            this.createConfetti();
+        } else {
+            this.playSound('defeat', 0.4);
+        }
+        
+        // Show final result screen for no-deal scenario
         setTimeout(() => {
-            document.getElementById('final-case-value').textContent = this.formatCurrency(playerCaseValue);
-            document.getElementById('final-case-value').classList.remove('hidden');
-            
-            // Play appropriate final sound
-            if (playerCaseValue >= 50000) {
-                this.playSound('victory', 0.8);
-                this.createConfetti();
-                this.createMoneyRain();
-            } else if (playerCaseValue >= 10000) {
-                this.playSound('highValue', 0.6);
-                this.createConfetti();
-            } else {
-                this.playSound('defeat', 0.4);
-            }
-            
-            // Show final result message
-            let resultMessage = '';
-            if (playerCaseValue >= 75000) {
-                resultMessage = `🎉 INCREDIBLE! You found one of the top prizes!`;
-            } else if (playerCaseValue >= 25000) {
-                resultMessage = `🎊 Fantastic! A great result!`;
-            } else if (playerCaseValue >= 5000) {
-                resultMessage = `👏 Well done! A solid win!`;
-            } else {
-                resultMessage = `🎭 Not this time, but you played brilliantly!`;
-            }
-            
-            document.getElementById('final-result-message').textContent = resultMessage;
-            document.getElementById('final-result-message').classList.remove('hidden');
-            
-            setTimeout(() => this.showPlayAgain(), 2000);
+            this.showFinalResultScreen(null, playerCaseValue, false);
         }, 2000);
     }
 
